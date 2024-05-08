@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify App</title>
+    <style>
+      .success-label {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="login">Login with Spotify</button>
+    <label id="success-label" class="success-label" style="display: none"
+      >Login successful!</label
+    >
+    <button id="get-tracks" style="display: none">Get Saved Tracks</button>
+    <ul id="tracks"></ul>
+
+    <script>
+      document.getElementById("login").addEventListener("click", function () {
+        window.location.href = "/auth/spotify";
+      });
+
+      document
+        .getElementById("get-tracks")
+        .addEventListener("click", function () {
+          fetch("/api/saved-tracks")
+            .then((response) => response.json()) // No need to convert to JSON here
+            .then((savedTracks) => {
+              const tracksList = document.getElementById("tracks");
+              tracksList.innerHTML = ""; // Clear the list before rendering new tracks
+              savedTracks.forEach((track) => {
+                const li = document.createElement("li");
+                li.textContent = `${track.track.name} - ${
+                  track.track.album.name
+                } - ${track.track.duration_ms / 60000} minutes`;
+                tracksList.appendChild(li);
+              });
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+    </script>
+  </body>
+</html>
